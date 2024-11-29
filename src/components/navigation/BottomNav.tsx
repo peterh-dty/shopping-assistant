@@ -4,9 +4,13 @@ import { cn } from "@/lib/utils";
 
 interface BottomNavProps {
   className?: string;
+  onSettingsClick?: () => void;
 }
 
-export default function BottomNav({ className = "" }: BottomNavProps) {
+export default function BottomNav({
+  className = "",
+  onSettingsClick = () => {},
+}: BottomNavProps) {
   const location = useLocation();
 
   const navItems = [
@@ -14,16 +18,19 @@ export default function BottomNav({ className = "" }: BottomNavProps) {
       icon: ListChecks,
       label: "Lists",
       path: "/",
+      onClick: undefined,
     },
     {
       icon: Map,
       label: "Map",
       path: "/map",
+      onClick: undefined,
     },
     {
       icon: Settings,
       label: "Settings",
       path: "/settings",
+      onClick: onSettingsClick,
     },
   ];
 
@@ -38,10 +45,15 @@ export default function BottomNav({ className = "" }: BottomNavProps) {
         const isActive = location.pathname === item.path;
         const Icon = item.icon;
 
+        const Component = item.onClick ? "button" : Link;
+        const componentProps = item.onClick
+          ? { onClick: item.onClick }
+          : { to: item.path };
+
         return (
-          <Link
+          <Component
             key={item.path}
-            to={item.path}
+            {...componentProps}
             className={cn(
               "flex flex-col items-center justify-center w-16 h-full",
               "text-muted-foreground transition-colors",
@@ -50,7 +62,7 @@ export default function BottomNav({ className = "" }: BottomNavProps) {
           >
             <Icon className="h-6 w-6 mb-1" />
             <span className="text-xs">{item.label}</span>
-          </Link>
+          </Component>
         );
       })}
     </nav>

@@ -3,15 +3,17 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Save, Trash2 } from "lucide-react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import ItemForm from "./ItemForm";
 import StoreRecommendations from "./StoreRecommendations";
 
@@ -39,11 +41,7 @@ export default function ListEditor({
   onSave = () => {},
   defaultValues = {
     title: "",
-    items: [
-      { id: "1", name: "Milk", quantity: 1, storePreference: "grocery" },
-      { id: "2", name: "Bread", quantity: 2 },
-      { id: "3", name: "Eggs", quantity: 12, storePreference: "supermarket" },
-    ],
+    items: [],
   },
   className = "",
 }: ListEditorProps) {
@@ -70,15 +68,18 @@ export default function ListEditor({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className={cn("sm:max-w-[600px] bg-background", className)}
-      >
-        <DialogHeader>
-          <DialogTitle>Edit Shopping List</DialogTitle>
-        </DialogHeader>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>
+            {defaultValues.title ? "Edit" : "Create"} Shopping List
+          </DrawerTitle>
+          <DrawerDescription>
+            Add items to your shopping list and get store recommendations.
+          </DrawerDescription>
+        </DrawerHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="p-4 space-y-6">
           {/* List Title */}
           <div className="space-y-2">
             <Label htmlFor="title">List Title</Label>
@@ -105,7 +106,7 @@ export default function ListEditor({
               </Button>
             </div>
 
-            <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+            <ScrollArea className="h-[300px] w-full rounded-md border p-4">
               <div className="space-y-4">
                 {items.map((item) => (
                   <div
@@ -158,28 +159,32 @@ export default function ListEditor({
             />
           )}
 
-          {/* Item Form Dialog */}
-          <Dialog open={showItemForm} onOpenChange={setShowItemForm}>
-            <DialogContent className="sm:max-w-[550px]">
-              <DialogHeader>
-                <DialogTitle>Add Item</DialogTitle>
-              </DialogHeader>
-              <ItemForm onSubmit={handleAddItem} className="py-4" />
-            </DialogContent>
-          </Dialog>
+          {/* Item Form Drawer */}
+          <Drawer open={showItemForm} onOpenChange={setShowItemForm}>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Add Item</DrawerTitle>
+                <DrawerDescription>
+                  Add a new item to your shopping list.
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="p-4">
+                <ItemForm onSubmit={handleAddItem} className="py-4" />
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
 
-        <DialogFooter>
-          <Button
-            type="submit"
-            onClick={handleSave}
-            disabled={!title || items.length === 0}
-          >
+        <DrawerFooter>
+          <Button onClick={handleSave} disabled={!title || items.length === 0}>
             <Save className="mr-2 h-4 w-4" />
             Save List
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

@@ -5,7 +5,7 @@ import BottomNav from "./navigation/BottomNav";
 import ShoppingLists from "./lists/ShoppingLists";
 import StoreMap from "./map/StoreMap";
 import ListEditor from "./lists/ListEditor";
-import SettingsPage from "./settings/SettingsPage";
+import SettingsDrawer from "./settings/SettingsDrawer";
 import { type Store, storeService } from "@/lib/services/stores";
 import { type LocationData } from "@/lib/services/geolocation";
 import { settingsService } from "@/lib/services/settings";
@@ -36,6 +36,7 @@ export default function Home() {
   ]);
 
   const [showListEditor, setShowListEditor] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [editingList, setEditingList] = useState<ShoppingList | null>(null);
   const [nearbyStores, setNearbyStores] = useState<Store[]>([]);
   const [userLocation, setUserLocation] = useState<LocationData>({
@@ -147,7 +148,14 @@ export default function Home() {
               />
             }
           />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route
+            path="/settings"
+            element={
+              <div className="p-4" onClick={() => setShowSettings(true)}>
+                Click here to open settings
+              </div>
+            }
+          />
         </Routes>
       </div>
 
@@ -161,7 +169,9 @@ export default function Home() {
         }}
       />
 
-      <BottomNav />
+      <SettingsDrawer open={showSettings} onOpenChange={setShowSettings} />
+
+      <BottomNav onSettingsClick={() => setShowSettings(true)} />
     </div>
   );
 }
